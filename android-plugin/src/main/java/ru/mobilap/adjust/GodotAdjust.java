@@ -9,6 +9,8 @@ import android.view.View;
 import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Objects;
+
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -100,30 +102,30 @@ public class GodotAdjust extends GodotPlugin {
 
     public void init(final String token, final boolean ProductionMode)
     {
-        getActivity().runOnUiThread(new Runnable() {
+        Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
-                String appToken = token;
                 String environment;
                 AdjustConfig config;
 
-                if (ProductionMode == true) {
+                if (ProductionMode) {
                     environment = AdjustConfig.ENVIRONMENT_PRODUCTION;
                 }
                 else {
                     environment = AdjustConfig.ENVIRONMENT_SANDBOX;
                 }
                 
-                config = new AdjustConfig(getActivity().getApplicationContext(), appToken, environment);
-                if (ProductionMode == true) {
-                    config.setLogLevel(LogLevel.SUPRESS);
+                config = new AdjustConfig(Objects.requireNonNull(getActivity()).getApplicationContext(), token, environment);
+                if (ProductionMode) {
+                    config.setLogLevel(LogLevel.SUPPRESS);
                 }
                 else {
                     config.setLogLevel(LogLevel.VERBOSE);
                 }
 
-                Adjust.onCreate(config);
+//                Adjust.onCreate(config);
+                Adjust.initSdk(config);
                 Adjust.onResume();
                 
                 getActivity().getApplication().registerActivityLifecycleCallbacks(new AdjustLifecycleCallbacks());
@@ -138,7 +140,7 @@ public class GodotAdjust extends GodotPlugin {
         @Override
         public void onActivityCreated (Activity activity, 
                 Bundle savedInstanceState) {
-            
+
         }
 
         @Override
